@@ -63,7 +63,12 @@ public class TransformerForInstrumentation extends BodyTransformer {
         SootMethod thisMethod = body.getMethod();
         String cName = thisMethod.getDeclaringClass().getName();
 
-        if (cName.startsWith("javato.") || cName.startsWith("java.awt.event.NativeLibLoader") || thisMethod.isAbstract() || thisMethod.isNative()) {
+        //if(cName.startsWith("jdk")) {
+          //  System.out.println(cName);
+        //}
+
+        if (cName.startsWith("javato.") || cName.startsWith("java.awt.event.NativeLibLoader") ||
+                thisMethod.isAbstract() || thisMethod.isNative()) {
             return;
         }
 

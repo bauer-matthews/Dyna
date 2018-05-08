@@ -423,6 +423,22 @@ public class Visitor {
         }
     }
 
+    protected void addCallWithIntArg(Chain units, Stmt s, String methodName, boolean before, IntConstant arg) {
+        SootMethodRef mr;
+
+        LinkedList args = new LinkedList();
+        args.addLast(IntConstant.v(getAndIncCounter()));
+        args.addLast(arg);
+
+
+        mr = Scene.v().getMethod("<" + observerClass + ": void " + methodName + "(int,int)>").makeRef();
+        if (before) {
+            units.insertBefore(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(mr, args)), s);
+        } else {
+            units.insertAfter(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(mr, args)), s);
+        }
+    }
+
     protected void addCallWithObject(Chain units, Stmt s, String methodName, Value v, boolean before) {
         SootMethodRef mr;
 
@@ -504,14 +520,32 @@ public class Visitor {
         }
     }
 
-    protected void addCallWithObjectString(Chain units, Stmt s, String methodName, Value v1, Value v2, boolean before) {
+    protected IntConstant addCallWithObjectString(Chain units, Stmt s, String methodName, Value v1, Value v2, boolean before) {
+        SootMethodRef mr;
+
+        IntConstant counter = IntConstant.v(getAndIncCounter());
+
+        LinkedList args = new LinkedList();
+        args.addLast(counter);
+        args.addLast(v1);
+        args.addLast(v2);
+        mr = Scene.v().getMethod("<" + observerClass + ": void " + methodName + "(int,java.lang.Object,java.lang.String)>").makeRef();
+        if (before) {
+            units.insertBefore(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(mr, args)), s);
+        } else {
+            units.insertAfter(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(mr, args)), s);
+        }
+
+        return counter;
+    }
+
+    protected void addCallWithObjectString(Chain units, Stmt s, String methodName, Value v1, boolean before) {
         SootMethodRef mr;
 
         LinkedList args = new LinkedList();
         args.addLast(IntConstant.v(getAndIncCounter()));
         args.addLast(v1);
-        args.addLast(v2);
-        mr = Scene.v().getMethod("<" + observerClass + ": void " + methodName + "(int,java.lang.Object,java.lang.String)>").makeRef();
+        mr = Scene.v().getMethod("<" + observerClass + ": void " + methodName + "(int,java.lang.Object)>").makeRef();
         if (before) {
             units.insertBefore(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(mr, args)), s);
         } else {

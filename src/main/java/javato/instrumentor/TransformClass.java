@@ -1,9 +1,11 @@
 package javato.instrumentor;
 
 import org.objectweb.asm.ClassReader;
+import soot.JastAddJ.Opt;
 import soot.PackManager;
 import soot.Scene;
 import soot.Transform;
+import soot.options.Options;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -147,19 +149,63 @@ public class TransformClass {
         //Scene.v().setSootClassPath(System.getProperty("sun.boot.class.path")
         //        + File.pathSeparator + System.getProperty("java.class.path"));
 
+        // TODO
         StringBuilder sb = new StringBuilder();
-        //sb.append(System.getProperty("sun.boot.class.path"));
-        //sb.append(File.pathSeparator);
-        //sb.append(System.getProperty("java.class.path"));
         sb.append("/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar");
         sb.append(File.pathSeparator);
-        sb.append("/home/matt/Desktop/Dyna/out/production/Dyna");
+        sb.append("/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar");
+        //sb.append(File.pathSeparator);
+        //sb.append("/home/matt/Desktop/Dyna/out");
+        sb.append(File.pathSeparator);
+        sb.append("/home/matt/Desktop/Dyna/src/test/resources/benchmarks/avrora/avrora-cvs-20091224.jar");
+        sb.append(File.pathSeparator);
+        sb.append("/home/matt/Desktop/Dyna/classes/production/Dyna");
+
 
         Scene.v().setSootClassPath(sb.toString());
         Scene.v().loadClassAndSupport(Visitor.observerClass);
+        Scene.v().addBasicClass("java.lang.System", 3);
+        Scene.v().addBasicClass("java.lang.Thread", 3);
+        Scene.v().addBasicClass("java.lang.Object", 3);
+        Scene.v().addBasicClass("java.lang.Class", 3);
+        Scene.v().addBasicClass("java.lang.Boolean", 3);
+        Scene.v().addBasicClass("java.lang.Long", 3);
+        Scene.v().addBasicClass("java.lang.Integer", 3);
+        Scene.v().addBasicClass("java.lang.String", 3);
+        Scene.v().addBasicClass("java.lang.Character", 3);
+        Scene.v().addBasicClass("java.lang.Double", 3);
+        Scene.v().addBasicClass("java.lang.Float", 3);
+        Scene.v().addBasicClass("java.lang.StringBuilder", 3);
+        Scene.v().addBasicClass("java.lang.AbstractStringBuilder", 3);
+        Scene.v().addBasicClass("java.lang.Error", 3);
+        Scene.v().addBasicClass("java.lang.Throwable", 3);
+        Scene.v().addBasicClass("java.lang.RuntimeException", 3);
+        Scene.v().addBasicClass("java.lang.Exception", 3);
+        Scene.v().addBasicClass("java.lang.AssertionError", 3);
+        Scene.v().addBasicClass("java.lang.ReflectiveOperationException", 3);
+        Scene.v().addBasicClass("java.lang.Short", 3);
+        Scene.v().addBasicClass("java.lang.Byte", 3);
+        Scene.v().addBasicClass("java.lang.ThreadLocal", 3);
+        Scene.v().addBasicClass("java.lang.Number", 3);
+        Scene.v().addBasicClass("java.lang.ClassNotFoundException", 3);
+        Scene.v().addBasicClass("java.util.AbstractList", 3);
+        Scene.v().addBasicClass("java.util.AbstractSequentialList", 3);
+        Scene.v().addBasicClass("java.util.LinkedList", 3);
+        Scene.v().addBasicClass("java.util.List", 3);
+        Scene.v().addBasicClass("java.util.AbstractCollection", 3);
+        Scene.v().addBasicClass("java.io.OutputStream", 3);
+        Scene.v().addBasicClass("java.io.FilterOutputStream", 3);
+        Scene.v().addBasicClass("java.io.PrintStream", 3);
+        Scene.v().addBasicClass("java.util.LinkedList$Node", 2);
+
+        //Options.v().set_whole_program(true);
+        Options.v().set_app(true);
+        Options.v().set_keep_line_number(true);
+        Options.v().set_validate(true);
         TransformerForInstrumentation.v().setVisitor(visitor);
         PackManager.v().getPack("jtp").add(new Transform("jtp.instrumenter", TransformerForInstrumentation.v()));
         soot.Main.main(args);
+
         soot.G.reset();
     }
 }

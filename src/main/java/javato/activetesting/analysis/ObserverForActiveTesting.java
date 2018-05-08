@@ -110,22 +110,20 @@ public class ObserverForActiveTesting extends Observer {
         analysis.lockBefore(iid, uniqueId(Thread.currentThread()), uniqueId(lock),lock);
     }
 
-    public static void myUnlockAfter(int iid) {
+    public static void myUnlockAfterMod(int iid, int lockIid) {
         LinkedList ls = ((LinkedList) lockStack.get());
         LinkedList<Integer> is = ((LinkedList<Integer>) iidStack.get());
         Object lock = ls.removeFirst();
         int entryIid = is.removeFirst();
-        while (iid != entryIid + 1) { // this is a hack; needs better handling in future
+        while (lockIid != entryIid) { // this is a hack; needs better handling in future
             if (lock != null) {
                 analysis.unlockAfter(iid, uniqueId(Thread.currentThread()), uniqueId(lock));
             }
             lock = ls.removeFirst();
             entryIid = is.removeFirst();
         }
-        if (iid != entryIid + 1) {
-            System.out.println("thread " + uniqueId(Thread.currentThread()));
-        }
-        assert iid == entryIid + 1;
+
+        assert lockIid == entryIid ;
         if (lock != null) {
             analysis.unlockAfter(iid, uniqueId(Thread.currentThread()), uniqueId(lock));
         }

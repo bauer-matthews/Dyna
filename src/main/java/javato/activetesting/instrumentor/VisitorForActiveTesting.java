@@ -272,9 +272,14 @@ public class VisitorForActiveTesting extends Visitor {
             if (!Parameters.ignoreConcurrency) {
                 String ssig = sig.substring(sig.indexOf(' ') + 1);
                 Value sig2 = StringConstant.v(ssig);
-                addCallWithObjectString(units, s, "myLockBefore", base, sig2, true);
+                IntConstant counterVal = addCallWithObjectString(units, s, "myLockBefore", base, sig2, true);
                 // t = t.syncMethod() is problematic, so do not pass t
-                addCall(units, s, "myUnlockAfter", false);
+
+                //OLD
+                addCallWithIntArg(units, s, "myUnlockAfterMod", false, counterVal);
+
+                // NEW
+                ////addCallWithObjectString(units, s, "myUnlockAfter", base, false);
             }
 
         } else if (Parameters.trackLocals ||
@@ -335,6 +340,9 @@ public class VisitorForActiveTesting extends Visitor {
     }
 
     public void visitInstanceFieldRef(SootMethod sm, Chain units, Stmt s, InstanceFieldRef instanceFieldRef, RefContext context) {
+
+        // NOTE: THESE CALLS ARE PROMBLEMATIC
+
         if (!Parameters.ignoreFields) {
             if ((!sm.getName().equals("<init>") || !instanceFieldRef.getField().getName().equals("this$0"))
             && (!sm.getName().equals("<init>") || !instanceFieldRef.getField().getName().startsWith("val$")))
